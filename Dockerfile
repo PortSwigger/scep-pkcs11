@@ -15,7 +15,7 @@ RUN /usr/sbin/ldconfig
 # Copy SCEP server images
 COPY scep-pkcs11/cmd/scepserver/scepserver /usr/bin/scepserver
 # Copy fake config so we can write to the filesystem.  FIXME hardcoded depot location.
-RUN ln -s /depot/aws-kms-config.json /etc/aws-kms-pkcs11/config.json
+RUN mkdir -p /etc/aws-kms-pkcs11/ && ln -s /depot/aws-kms-config.json /etc/aws-kms-pkcs11/config.json
 
 # Add startup.sh
 COPY scep-pkcs11/startup.sh /startup.sh
