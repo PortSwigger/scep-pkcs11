@@ -2,6 +2,7 @@
 
 #DEPOT=/depot
 PKCS11CONF=${DEPOT}/pkcs11-config.json
+AWSKMSCONF=${DEPOT}/aws-kms-config.json
 #REGION=eu-west-1
 
 # things to grab from environment variables
@@ -44,9 +45,8 @@ getsecretblob ${SM_PKCS11_CONF} ${PKCS11CONF}
 #         mkdir -p /etc/aws-kms-pkcs11/
 #         getsecretblob ${SM_KMS_CONFIG} /etc/aws-kms-pkcs11/config.json
 # fi
-mkdir -p $HOME/.config/aws-kms-pkcs11/
-getsecretblob ${SM_KMS_CONFIG} $HOME/.config/aws-kms-pkcs11/config.json
-cat $HOME/.config/aws-kms-pkcs11/config.json || echo "Failed to read $HOME/.config/aws-kms-pkcs11/config.json" && exit 1
+
+getsecretblob ${SM_KMS_CONFIG} ${AWSKMSCONF}
 
 CAPASS=`getsecretvalue $SCEP_CA_PASS`
 CHALLENGE=`getsecretvalue $SCEP_CHALLENGE_PASSWORD`
