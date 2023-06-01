@@ -44,8 +44,9 @@ getsecretblob ${SM_PKCS11_CONF} ${PKCS11CONF}
 #         mkdir -p /etc/aws-kms-pkcs11/
 #         getsecretblob ${SM_KMS_CONFIG} /etc/aws-kms-pkcs11/config.json
 # fi
-getsecretblob ${SM_KMS_CONFIG} /etc/aws-kms-pkcs11/config.json
-cat /etc/aws-kms-pkcs11/config.json || echo "Failed to read /etc/aws-kms-pkcs11/config.json" && exit 1
+mkdir -p $XDG_CONFIG_HOME/aws-kms-pkcs11/
+getsecretblob ${SM_KMS_CONFIG} $XDG_CONFIG_HOME/aws-kms-pkcs11/config.json
+cat $XDG_CONFIG_HOME/aws-kms-pkcs11/config.json || echo "Failed to read $XDG_CONFIG_HOME/aws-kms-pkcs11/config.json" && exit 1
 
 CAPASS=`getsecretvalue $SCEP_CA_PASS`
 CHALLENGE=`getsecretvalue $SCEP_CHALLENGE_PASSWORD`
