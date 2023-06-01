@@ -34,17 +34,17 @@ getsecretblob() {
 }
 
 # First up, check to see if our pkcs11 config file exists, and grab it if not.
-if [ ! -f ${PKCS11CONF} ]; then
-        getsecretblob ${SM_PKCS11_CONF} ${PKCS11CONF}
-fi
-
+# if [ ! -f ${PKCS11CONF} ]; then
+#         getsecretblob ${SM_PKCS11_CONF} ${PKCS11CONF}
+# fi
+getsecretblob ${SM_PKCS11_CONF} ${PKCS11CONF}
 # next, we need to grab our aws-kms-pkcs11 config.
 # this test is redundant but makes it look pretty :-)
-if [ ! -f /etc/aws-kms-pkcs11/config.json ]; then
-        mkdir -p /etc/aws-kms-pkcs11/
-        getsecretblob ${SM_KMS_CONFIG} /etc/aws-kms-pkcs11/config.json
-fi
-
+# if [ ! -f /etc/aws-kms-pkcs11/config.json ]; then
+#         mkdir -p /etc/aws-kms-pkcs11/
+#         getsecretblob ${SM_KMS_CONFIG} /etc/aws-kms-pkcs11/config.json
+# fi
+getsecretblob ${SM_KMS_CONFIG} /etc/aws-kms-pkcs11/config.json
 cat /etc/aws-kms-pkcs11/config.json || echo "Failed to read /etc/aws-kms-pkcs11/config.json" && exit 1
 
 CAPASS=`getsecretvalue $SCEP_CA_PASS`
