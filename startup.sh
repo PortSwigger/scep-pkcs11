@@ -47,7 +47,9 @@ getsecretblob ${SM_PKCS11_CONF} ${PKCS11CONF}
 # fi
 
 getsecretblob ${SM_KMS_CONFIG} ${AWSKMSCONF}
-
+ls -l ${DEPOT}
+ls -l ${PKCS11CONF} ${AWSKMSCONF}
+cat ${SM_KMS_CONFIG} ${AWSKMSCONF}
 CAPASS=`getsecretvalue $SCEP_CA_PASS`
 CHALLENGE=`getsecretvalue $SCEP_CHALLENGE_PASSWORD`
 
