@@ -15,9 +15,10 @@ RUN /usr/sbin/ldconfig
 # Copy SCEP server images
 COPY scep-pkcs11/cmd/scepserver/scepserver /usr/bin/scepserver
 # Copy fake config so we can write to the filesystem
-COPY scep-pkcs11/etc.aws-kms-pkcs11.config.json /tmp/aws-kms-pkcs11/config.json
-RUN mkdir -p /etc/aws-kms-pkcs11/
-RUN ln -s /tmp/aws-kms-pkcs11/config.json /etc/aws-kms-pkcs11/config.json
+COPY scep-pkcs11/etc.aws-kms-pkcs11.config.json /etc/aws-kms-pkcs11/config.json
+RUN chmod 0666 /etc/aws-kms-pkcs11/config.json
+# RUN mkdir -p /etc/aws-kms-pkcs11/
+# RUN ln -s /tmp/aws-kms-pkcs11/config.json /etc/aws-kms-pkcs11/config.json
 # Add startup.sh
 COPY scep-pkcs11/startup.sh /startup.sh
 RUN chmod 0755 /startup.sh
