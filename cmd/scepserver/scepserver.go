@@ -152,6 +152,12 @@ func main() {
 			signerOpts = append(signerOpts, scepdepot.WithSeverAttrs())
 		}
 		if *flPkcs11ConfigFile != "" {
+			fcontents, err := os.ReadFile(*flPkcs11ConfigFile)
+			if err != nil {
+				lginfo.Log("err", err)
+				os.Exit(1)
+			}
+			lginfo.Log("info", "pkcs11-config: %#v", string(fcontents))
 			// Test config?
 			ctx, err := crypto11.ConfigureFromFile(*flPkcs11ConfigFile)
 			if err != nil {
