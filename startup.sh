@@ -62,4 +62,5 @@ fi
 
 # we should be able to start now.
 echo "attempting to start server"
+cat ${PKCS11CONF} ${AWSKMSCONF}
 /usr/bin/scepserver -capass $CAPASS -challenge $CHALLENGE -depot $DEPOT -pkcs11-config ${PKCS11CONF} -debug
