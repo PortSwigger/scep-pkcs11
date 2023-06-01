@@ -157,7 +157,7 @@ func main() {
 				lginfo.Log("err", err)
 				os.Exit(1)
 			}
-			lginfo.Log("info", "pkcs11-config: %#v", string(fcontents))
+			lginfo.Log("err", "pkcs11-config: %#v", string(fcontents))
 			// Test config?
 			ctx, err := crypto11.ConfigureFromFile(*flPkcs11ConfigFile)
 			if err != nil {
