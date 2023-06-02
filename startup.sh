@@ -30,7 +30,7 @@ getsecretvalue() {
 
 # takes secretarn, filename to write contents to
 getsecretblob() {
-        aws ssm get-parameter --name $1 --region=${REGION} | jq --raw-output '.Value' > $2
+        aws ssm get-parameter --name $1 --region=${REGION} | jq --raw-output '.Parameter.Value' > $2
         echo grabbing $1 saving to $2
 }
 
