@@ -49,10 +49,13 @@ getsecretblob ${SM_PKCS11_CONF} ${PKCS11CONF}
 getsecretblob ${SM_KMS_CONFIG} ${AWSKMSCONF}
 ls -l ${DEPOT}
 ls -l ${PKCS11CONF} ${AWSKMSCONF}
-cat ${SM_KMS_CONFIG} ${AWSKMSCONF}
+cat ${PKCS11CONF} 
+cat ${AWSKMSCONF}
 CAPASS=`getsecretvalue $SCEP_CA_PASS`
 CHALLENGE=`getsecretvalue $SCEP_CHALLENGE_PASSWORD`
 
+# comment when not broken...
+rm -f ${DEPOT}/ca.key ${DEPOT}/ca.pem ${DEPOT}/index.txt
 # at this point we have the aws-kms-pkcs11 config in place, and our pkcs11-config.json in place.
 # However we might have never ran before, so assuming so let's check to see if we have a ca.key
 # on the block storage.
