@@ -54,7 +54,7 @@ CAPASS=`getsecretvalue $SCEP_CA_PASS`
 CHALLENGE=`getsecretvalue $SCEP_CHALLENGE_PASSWORD`
 
 # comment when not broken... uncomment when you want to 'start afresh'.
-# rm -f ${DEPOT}/ca.key ${DEPOT}/ca.pem ${DEPOT}/index.txt ${DEPOT}/external-ca.pem
+rm -f ${DEPOT}/ca.key ${DEPOT}/index.txt ${DEPOT}/*.pem ${DEPOT}/serial
 
 # at this point we have the aws-kms-pkcs11 config in place, and our pkcs11-config.json in place.
 # However we might have never ran before, so assuming so let's check to see if we have a ca.key
@@ -68,4 +68,4 @@ fi
 # we should be able to start now.
 echo "attempting to start server"
 cat ${PKCS11CONF} ${AWSKMSCONF}
-/usr/bin/scepserver -capass $CAPASS -challenge $CHALLENGE -depot $DEPOT -pkcs11-config ${PKCS11CONF} -debug
+/usr/bin/scepserver -capass $CAPASS -challenge $CHALLENGE -depot $DEPOT -pkcs11-config ${PKCS11CONF} -debug -allowrenew 0
