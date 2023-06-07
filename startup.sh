@@ -47,9 +47,6 @@ getsecretblob ${SM_PKCS11_CONF} ${PKCS11CONF}
 # fi
 
 getsecretblob ${SM_KMS_CONFIG} ${AWSKMSCONF}
-# get real cert
-rm -f -- ${DEPOT}/external-ca.pem
-getsecretblob ${SCEP_CA_CERT} ${DEPOT}/external-ca.pem
 
 CAPASS=`getsecretvalue $SCEP_CA_PASS`
 CHALLENGE=`getsecretvalue $SCEP_CHALLENGE_PASSWORD`
@@ -65,6 +62,10 @@ if [ ! -f ${DEPOT}/ca.key ]; then
         echo "Seems like first bootup - creating on disk CA"
         /usr/bin/scepserver ca -init -pkcs11-config ${PKCS11CONF} -depot ${DEPOT} --key-password $CAPASS || exit 1
 fi
+
+# get real cert
+rm -f -- ${DEPOT}/external-ca.pem
+getsecretblob ${SCEP_CA_CERT} ${DEPOT}/external-ca.pem
 
 # we should be able to start now.
 echo "attempting to start server"
