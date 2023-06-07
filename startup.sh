@@ -48,7 +48,7 @@ getsecretblob ${SM_PKCS11_CONF} ${PKCS11CONF}
 
 getsecretblob ${SM_KMS_CONFIG} ${AWSKMSCONF}
 # TODO 
-# getsecretblob ${SM_EXTERNAL_CA_CERT} ${EXTERNAL_CA_CERT}
+getsecretblob ${SCEP_CA_CERT} ${DEPOT}/external-ca.pem
 
 CAPASS=`getsecretvalue $SCEP_CA_PASS`
 CHALLENGE=`getsecretvalue $SCEP_CHALLENGE_PASSWORD`
