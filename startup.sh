@@ -47,7 +47,8 @@ getsecretblob ${SM_PKCS11_CONF} ${PKCS11CONF}
 # fi
 
 getsecretblob ${SM_KMS_CONFIG} ${AWSKMSCONF}
-# TODO 
+# get real cert
+rm -f -- ${DEPOT}/external-ca.pem
 getsecretblob ${SCEP_CA_CERT} ${DEPOT}/external-ca.pem
 
 CAPASS=`getsecretvalue $SCEP_CA_PASS`
