@@ -96,7 +96,7 @@ func (d *fileDepot) PutDynamoDb(bucket string, crt *x509.Certificate) error {
 
 	input := &dynamodb.PutItemInput{
 		Item:      av,
-		TableName: aws.String("FIXME"),
+		TableName: aws.String(bucket),
 	}
 	_, err = dyndb.PutItem(input)
 	if err != nil {

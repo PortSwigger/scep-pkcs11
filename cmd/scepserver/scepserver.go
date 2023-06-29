@@ -153,7 +153,7 @@ func main() {
 			signerOpts = append(signerOpts, scepdepot.WithSeverAttrs())
 		}
 		if *flDynamoDbBucket != "" {
-			lginfo.Log("info", "Will use %v as my dynamodb bucket", &flDynamoDbBucket)
+			//lginfo.Log("info", "Will use %v as my dynamodb bucket", &flDynamoDbBucket)
 			signerOpts = append(signerOpts, scepdepot.WithDynamoDbBucket(*flDynamoDbBucket))
 		}
 		if *flPkcs11ConfigFile != "" {
