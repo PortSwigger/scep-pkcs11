@@ -235,11 +235,11 @@ func (d *fileDepot) HasCN(_ string, allowTime int, cert *x509.Certificate, revok
 			} else if strings.HasPrefix(line, "V\t") {
 				issueDate, err := strconv.ParseInt(strings.Replace(strings.Split(line, "\t")[1], "Z", "", 1), 10, 64)
 				if err != nil {
-					return false, errors.New("Could not get expiry date from ca db")
+					return false, errors.New("could not get expiry date from ca db")
 				}
 				minimalRenewDate, err := strconv.ParseInt(strings.Replace(makeOpenSSLTime(time.Now().AddDate(0, 0, allowTime).UTC()), "Z", "", 1), 10, 64)
 				if err != nil {
-					return false, errors.New("Could not calculate expiry date")
+					return false, errors.New("could not calculate expiry date")
 				}
 				entries := strings.Split(line, "\t")
 				serial := strings.ToUpper(entries[3])

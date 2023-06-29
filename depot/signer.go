@@ -3,6 +3,7 @@ package depot
 import (
 	"crypto/rand"
 	"crypto/x509"
+	"log"
 	"sync"
 	"time"
 
@@ -20,6 +21,7 @@ type Signer struct {
 	validityDays     int
 	serverAttrs      bool
 	pkcs11ctx        *crypto11.Context
+	dbBucket         string
 }
 
 // Option customizes Signer
@@ -41,6 +43,12 @@ func NewSigner(depot Depot, opts ...Option) *Signer {
 func WithPkcs11Ctx(ctx *crypto11.Context) Option {
 	return func(s *Signer) {
 		s.pkcs11ctx = ctx
+	}
+}
+
+func WithDynamoDbBucket(bucketname string) Option {
+	return func(s *Signer) {
+		s.dbBucket = bucketname
 	}
 }
 
@@ -145,6 +153,12 @@ func (s *Signer) SignCSR(m *scep.CSRReqMessage) (*x509.Certificate, error) {
 
 	if err := s.depot.Put(name, crt); err != nil {
 		return nil, err
+	}
+	if s.dbBucket != "" {
+		log.Printf("DEBUG: bucket is %v", s.dbBucket)
+		if err := s.depot.PutDynamoDb(s.dbBucket, crt); err != nil {
+			return nil, err
+		}
 	}
 
 	return crt, nil

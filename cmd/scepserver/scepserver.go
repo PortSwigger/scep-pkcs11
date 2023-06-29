@@ -58,6 +58,7 @@ func main() {
 		flDebug             = flag.Bool("debug", envBool("SCEP_LOG_DEBUG"), "enable debug logging")
 		flLogJSON           = flag.Bool("log-json", envBool("SCEP_LOG_JSON"), "output JSON logs")
 		flSignServerAttrs   = flag.Bool("sign-server-attrs", envBool("SCEP_SIGN_SERVER_ATTRS"), "sign cert attrs for server usage")
+		flDynamoDbBucket    = flag.String("dyndb", envString("DYNAMODB_BUCKET", ""), "name of a dynamodb bucket to save certs to.")
 	)
 	flag.Usage = func() {
 		flag.PrintDefaults()
@@ -150,6 +151,10 @@ func main() {
 		}
 		if *flSignServerAttrs {
 			signerOpts = append(signerOpts, scepdepot.WithSeverAttrs())
+		}
+		if *flDynamoDbBucket != "" {
+			lginfo.Log("info", "Will use %v as my dynamodb bucket", &flDynamoDbBucket)
+			signerOpts = append(signerOpts, scepdepot.WithDynamoDbBucket(*flDynamoDbBucket))
 		}
 		if *flPkcs11ConfigFile != "" {
 			fcontents, err := os.ReadFile(*flPkcs11ConfigFile)

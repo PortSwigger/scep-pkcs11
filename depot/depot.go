@@ -13,6 +13,7 @@ type Depot interface {
 	CA(pass []byte) ([]*x509.Certificate, *rsa.PrivateKey, error)
 	ExternalCA(ctx *crypto11.Context) ([]*x509.Certificate, crypto11.Signer, error)
 	Put(name string, crt *x509.Certificate) error
+	PutDynamoDb(bucket string, crt *x509.Certificate) error
 	Serial() (*big.Int, error)
 	HasCN(cn string, allowTime int, cert *x509.Certificate, revokeOldCertificate bool) (bool, error)
 }
