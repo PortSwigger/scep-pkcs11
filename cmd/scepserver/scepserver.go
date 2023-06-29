@@ -59,6 +59,8 @@ func main() {
 		flLogJSON           = flag.Bool("log-json", envBool("SCEP_LOG_JSON"), "output JSON logs")
 		flSignServerAttrs   = flag.Bool("sign-server-attrs", envBool("SCEP_SIGN_SERVER_ATTRS"), "sign cert attrs for server usage")
 		flDynamoDbBucket    = flag.String("dyndb", envString("DYNAMODB_BUCKET", ""), "name of a dynamodb bucket to save certs to.")
+		flAiaUrl            = flag.String("aiaurl", envString("AIA_URL", ""), "authority information access url. optional, ignore if this makes no sense.")
+		flOcspUrl           = flag.String("ocsp", envString("OCSP_URL", ""), "ocsp server url. optional, ignore if this makes no sense.")
 	)
 	flag.Usage = func() {
 		flag.PrintDefaults()
@@ -155,6 +157,13 @@ func main() {
 		if *flDynamoDbBucket != "" {
 			//lginfo.Log("info", "Will use %v as my dynamodb bucket", &flDynamoDbBucket)
 			signerOpts = append(signerOpts, scepdepot.WithDynamoDbBucket(*flDynamoDbBucket))
+		}
+		if *flAiaUrl != "" {
+			signerOpts = append(signerOpts, scepdepot.WithAiaUrl(*flAiaUrl))
+		}
+
+		if *flOcspUrl != "" {
+			signerOpts = append(signerOpts, scepdepot.WithOcspUrl(*flOcspUrl))
 		}
 		if *flPkcs11ConfigFile != "" {
 			fcontents, err := os.ReadFile(*flPkcs11ConfigFile)

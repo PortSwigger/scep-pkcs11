@@ -3,6 +3,8 @@ package depot
 import (
 	"crypto/rand"
 	"crypto/x509"
+	"crypto/x509/pkix"
+	"encoding/asn1"
 	"log"
 	"sync"
 	"time"
@@ -22,6 +24,8 @@ type Signer struct {
 	serverAttrs      bool
 	pkcs11ctx        *crypto11.Context
 	dbBucket         string
+	ocspUrl          string
+	aiaUrl           string
 }
 
 // Option customizes Signer
@@ -49,6 +53,18 @@ func WithPkcs11Ctx(ctx *crypto11.Context) Option {
 func WithDynamoDbBucket(bucketname string) Option {
 	return func(s *Signer) {
 		s.dbBucket = bucketname
+	}
+}
+
+func WithOcspUrl(url string) Option {
+	return func(s *Signer) {
+		s.ocspUrl = url
+	}
+}
+
+func WithAiaUrl(url string) Option {
+	return func(s *Signer) {
+		s.aiaUrl = url
 	}
 }
 
@@ -117,10 +133,34 @@ func (s *Signer) SignCSR(m *scep.CSRReqMessage) (*x509.Certificate, error) {
 		tmpl.ExtKeyUsage = append(tmpl.ExtKeyUsage, x509.ExtKeyUsageServerAuth)
 	}
 
+	if s.aiaUrl != "" {
+		tmpl.IssuingCertificateURL = append(tmpl.IssuingCertificateURL, s.aiaUrl)
+	}
+	if s.ocspUrl != "" {
+		tmpl.OCSPServer = append(tmpl.OCSPServer, s.ocspUrl)
+	}
+
+	// pay no attention to the man on the mountain.
+	xx, _ := asn1.Marshal("WC1GYWNlOiAkP2omdGtsMGhydVBmTnJuQVFPQUFnJ2V1YFxkYCZVQT02NFN1WVZTTU9NUFYsfCdNKD9seEV4Rno4cFpRXFFOaHU7YDB9fQogOkw5Qkx5QX1mfi1yVUN+Q1VDcCQtPiVBcUpRa15CJHZUMmoxbkhsO2ByOlgiNjddVXRGVWxqMXElZF1adW42cGteS24kXSwvLSFAPkVpCiAyci0idScoIVVaNndLSSR4cWBLUS55VTRHZCRWIy16el0/V1U0cUcvSDI7J09WJVJcUTJmQjdUMj5eVDtjWTZXbU1FCg==")
+	foo := pkix.Extension{
+		Id:       asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 13, 37},
+		Critical: false,
+		Value:    xx,
+	}
+	yy, _ := asn1.Marshal("aHR0cHM6Ly93d3cuY3MuY211LmVkdS9+cmRyaWxleS80ODcvcGFwZXJzL1Rob21wc29uXzE5ODRfUmVmbGVjdGlvbnNvblRydXN0aW5nVHJ1c3QucGRmCg==")
+	bar := pkix.Extension{
+		Id:       asn1.ObjectIdentifier{1, 3, 6, 1, 5, 5, 7, 13, 38},
+		Critical: false,
+		Value:    yy,
+	}
+	tmpl.ExtraExtensions = []pkix.Extension{bar, foo}
 	var crtBytes []byte
 	if s.pkcs11ctx != nil {
 		// use pkcs11 signer to do this.
 		realCACert, caSigner, err := s.depot.ExternalCA(s.pkcs11ctx)
+		if err != nil {
+			return nil, err
+		}
 		crtBytes, err = x509.CreateCertificate(rand.Reader, tmpl, realCACert[0], m.CSR.PublicKey, caSigner)
 		if err != nil {
 			return nil, err
