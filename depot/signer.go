@@ -120,6 +120,7 @@ func (s *Signer) SignCSR(m *scep.CSRReqMessage) (*x509.Certificate, error) {
 		KeyUsage:     x509.KeyUsageDigitalSignature,
 		ExtKeyUsage: []x509.ExtKeyUsage{
 			x509.ExtKeyUsageClientAuth,
+			x509.ExtKeyUsageEmailProtection,
 		},
 		SignatureAlgorithm: m.CSR.SignatureAlgorithm,
 		DNSNames:           m.CSR.DNSNames,
