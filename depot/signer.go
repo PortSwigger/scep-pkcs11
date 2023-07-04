@@ -6,6 +6,7 @@ import (
 	"crypto/x509/pkix"
 	"encoding/asn1"
 	"log"
+	mrand "math/rand"
 	"sync"
 	"time"
 
@@ -111,11 +112,15 @@ func (s *Signer) SignCSR(m *scep.CSRReqMessage) (*x509.Certificate, error) {
 	}
 
 	// create cert template
+	// add a non-secure random int to expiry to avoid everyone renewing at the same time.
+	// This gives us certs with a validity of anywhere in 1-2 years.
+	s1 := mrand.NewSource(time.Now().UnixNano())
+	r1 := mrand.New(s1)
 	tmpl := &x509.Certificate{
 		SerialNumber: serial,
 		Subject:      m.CSR.Subject,
 		NotBefore:    time.Now().Add(time.Second * -600).UTC(),
-		NotAfter:     time.Now().AddDate(0, 0, s.validityDays).UTC(),
+		NotAfter:     time.Now().AddDate(0, 0, s.validityDays+r1.Intn(365)).UTC(),
 		SubjectKeyId: id,
 		KeyUsage:     x509.KeyUsageDigitalSignature | x509.KeyUsageDataEncipherment | x509.KeyUsageContentCommitment | x509.KeyUsageKeyEncipherment,
 		ExtKeyUsage: []x509.ExtKeyUsage{

@@ -9,14 +9,12 @@ import (
 	"encoding/pem"
 	"flag"
 	"fmt"
-	mrand "math/rand"
 	"net/http"
 	"os"
 	"os/signal"
 	"path/filepath"
 	"strconv"
 	"syscall"
-	"time"
 
 	"github.com/ThalesIgnite/crypto11"
 	"github.com/micromdm/scep/v2/csrverifier"
@@ -148,14 +146,10 @@ func main() {
 			lginfo.Log("err", "missing CA certificate")
 			os.Exit(1)
 		}
-		// add a non-secure random int to expiry to avoid everyone renewing at the same time.
-		// This gives us certs with a validity of anywhere in 1-2 years.
-		s1 := mrand.NewSource(time.Now().UnixNano())
-		r1 := mrand.New(s1)
 
 		signerOpts := []scepdepot.Option{
 			scepdepot.WithAllowRenewalDays(allowRenewal),
-			scepdepot.WithValidityDays(clientValidity + r1.Intn(365)),
+			scepdepot.WithValidityDays(clientValidity),
 			scepdepot.WithCAPass(*flCAPass),
 		}
 		if *flSignServerAttrs {
