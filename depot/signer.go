@@ -121,8 +121,8 @@ func (s *Signer) SignCSR(m *scep.CSRReqMessage) (*x509.Certificate, error) {
 		Subject:      m.CSR.Subject,
 		NotBefore:    time.Now().Add(time.Second * -600).UTC(),
 		NotAfter:     time.Now().AddDate(0, 0, s.validityDays+r1.Intn(365)).UTC(),
-		SubjectKeyId: id,
-		KeyUsage:     x509.KeyUsageDigitalSignature | x509.KeyUsageDataEncipherment | x509.KeyUsageContentCommitment | x509.KeyUsageKeyEncipherment,
+		SubjectKeyId: id,                            // adding the below will enable certs to be used for s/mime encryption - but when the cert rolls, you will lose all access to previous mails (at least using certificate service under macos...)
+		KeyUsage:     x509.KeyUsageDigitalSignature, // | x509.KeyUsageDataEncipherment | x509.KeyUsageContentCommitment | x509.KeyUsageKeyEncipherment,
 		ExtKeyUsage: []x509.ExtKeyUsage{
 			x509.ExtKeyUsageClientAuth,
 			x509.ExtKeyUsageEmailProtection,
