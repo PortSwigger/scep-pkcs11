@@ -117,7 +117,7 @@ func (s *Signer) SignCSR(m *scep.CSRReqMessage) (*x509.Certificate, error) {
 		NotBefore:    time.Now().Add(time.Second * -600).UTC(),
 		NotAfter:     time.Now().AddDate(0, 0, s.validityDays).UTC(),
 		SubjectKeyId: id,
-		KeyUsage:     x509.KeyUsageDigitalSignature,
+		KeyUsage:     x509.KeyUsageDigitalSignature | x509.KeyUsageDataEncipherment,
 		ExtKeyUsage: []x509.ExtKeyUsage{
 			x509.ExtKeyUsageClientAuth,
 			x509.ExtKeyUsageEmailProtection,
@@ -128,7 +128,8 @@ func (s *Signer) SignCSR(m *scep.CSRReqMessage) (*x509.Certificate, error) {
 		IPAddresses:        m.CSR.IPAddresses,
 		URIs:               m.CSR.URIs,
 	}
-
+	// if wanting to perform s/mime encryption too, you'll need to enable the serverAttrs flag via
+	// -sign-server-attrs true, or SCEP_SIGN_SERVER_ATTRS env variable
 	if s.serverAttrs {
 		tmpl.KeyUsage |= x509.KeyUsageDataEncipherment | x509.KeyUsageKeyEncipherment
 		tmpl.ExtKeyUsage = append(tmpl.ExtKeyUsage, x509.ExtKeyUsageServerAuth)
