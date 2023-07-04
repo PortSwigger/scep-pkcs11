@@ -16,6 +16,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"syscall"
+	"time"
 
 	"github.com/ThalesIgnite/crypto11"
 	"github.com/micromdm/scep/v2/csrverifier"
@@ -149,10 +150,12 @@ func main() {
 		}
 		// add a non-secure random int to expiry to avoid everyone renewing at the same time.
 		// This gives us certs with a validity of anywhere in 1-2 years.
-		validity := mrand.Intn(365)
+		s1 := mrand.NewSource(time.Now().UnixNano())
+		r1 := mrand.New(s1)
+
 		signerOpts := []scepdepot.Option{
 			scepdepot.WithAllowRenewalDays(allowRenewal),
-			scepdepot.WithValidityDays(clientValidity + validity),
+			scepdepot.WithValidityDays(clientValidity + r1.Intn(365)),
 			scepdepot.WithCAPass(*flCAPass),
 		}
 		if *flSignServerAttrs {
